@@ -8,42 +8,7 @@
 
 <body>
 <div class="container">
-  <ul class="comments">
-    <li class="comment">
-      <div class="comment-header">
-        <div>Глеб Фокин</div>
-        <div>12.02.22 12:18</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          Это будет первый комментарий на этой странице
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">3</span>
-          <button class="like-button"></button>
-        </div>
-      </div>
-    </li>
-    <li class="comment">
-      <div class="comment-header">
-        <div>Варвара Н.</div>
-        <div>13.02.22 19:22</div>
-      </div>
-      <div class="comment-body">
-        <div class="comment-text">
-          Мне нравится как оформлена эта страница! ❤️
-        </div>
-      </div>
-      <div class="comment-footer">
-        <div class="likes">
-          <span class="likes-counter">75</span>
-          <button class="like-button -active-like"></button>
-        </div>
-      </div>
-    </li>
-  </ul>
+  <ul id="comments" class="comments"></ul>
   <div class="add-form">
     <input
             type="text"
@@ -61,22 +26,82 @@
     </div>
   </div>
 </div>
-</body>
 
 <script>
   "use strict";
 
-  // Добавляем обработчик события на изменение поля "Имя"
-  document.querySelector('.add-form-name').addEventListener('input', function(event) {
-    console.log(`Изменено поле "Имя": ${event.target.value}`);
-  });
+  // Массив данных для комментариев
+  const commentsData = [
+    {
+      author: 'Глеб Фокин',
+      date: '12.02.22 12:18',
+      text: 'Это будет первый комментарий на этой странице',
+      likesCount: 3,
+      isLiked: false
+    },
+    {
+      author: 'Варвара Н.',
+      date: '13.02.22 19:22',
+      text: 'Мне нравится как оформлена эта страница! ❤️',
+      likesCount: 75,
+      isLiked: true
+    }
+  ];
 
-  // Добавляем обработчик события на изменение поля "Комментарий"
-  document.querySelector('.add-form-text').addEventListener('input', function(event) {
-    console.log(`Изменено поле "Комментарий": ${event.target.value}`);
-  });
+  // Рендеринг комментариев
+  function renderComments() {
+    const commentsContainer = document.getElementById('comments');
+    commentsContainer.innerHTML = '';
 
-  // Обработчик события на нажатие кнопки "Добавить"
+    commentsData.forEach((comment, index) => {
+      const commentItem = document.createElement('li');
+      commentItem.className = 'comment';
+
+      // Заголовок комментария
+      const headerDiv = document.createElement('div');
+      headerDiv.className = 'comment-header';
+      headerDiv.innerHTML = `
+        <div>${comment.author}</div>
+        <div>${comment.date}</div>
+      `;
+      commentItem.appendChild(headerDiv);
+
+      // Тело комментария
+      const bodyDiv = document.createElement('div');
+      bodyDiv.className = 'comment-body';
+      bodyDiv.innerHTML = `<div class="comment-text">${comment.text}</div>`;
+      commentItem.appendChild(bodyDiv);
+
+      // Лайки
+      const footerDiv = document.createElement('div');
+      footerDiv.className = 'comment-footer';
+
+      const likeButton = document.createElement('button');
+      likeButton.className = 'like-button';
+      likeButton.dataset.index = index;
+      likeButton.onclick = () => toggleLike(index);
+
+      const likesCounter = document.createElement('span');
+      likesCounter.className = 'likes-counter';
+      likesCounter.textContent = comment.likesCount;
+
+      footerDiv.appendChild(likesCounter);
+      footerDiv.appendChild(likeButton);
+      commentItem.appendChild(footerDiv);
+
+      commentsContainer.appendChild(commentItem);
+    });
+  }
+
+  // Обработчик клика на кнопку лайка
+  function toggleLike(index) {
+    const comment = commentsData[index];
+    comment.isLiked = !comment.isLiked; // Меняем состояние лайка
+    comment.likesCount += comment.isLiked ? 1 : -1; // Увеличиваем или уменьшаем счетчик лайков
+    renderComments(); // Перерендериваем комментарии
+  }
+
+  // Обработчик отправки формы для добавления нового комментария
   document.querySelector('.add-form-button').addEventListener('click', function() {
     const nameInput = document.querySelector('.add-form-name');
     const commentTextarea = document.querySelector('.add-form-text');
@@ -85,39 +110,27 @@
 
     // Получаем текущее время
     let currentDate = new Date();
-    let dateString = `${currentDate.getDate()}.${currentDate.getMonth()+1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+    let dateString = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-    // Создаем шаблон нового комментария
-    const newCommentTemplate = `
-        <li class="comment">
-          <div class="comment-header">
-            <div>${nameInput.value}</div>
-            <div>${dateString}</div>
-          </div>
-          <div class="comment-body">
-            <div class="comment-text">
-              ${commentTextarea.value}
-            </div>
-          </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">0</span>
-              <button class="like-button"></button>
-            </div>
-          </div>
-        </li>
-      `;
+    // Добавляем новый комментарий в массив данных
+    commentsData.push({
+      author: nameInput.value,
+      date: dateString,
+      text: commentTextarea.value,
+      likesCount: 0,
+      isLiked: false
+    });
 
-    // Находим контейнер для комментариев
-    const commentsList = document.querySelector('.comments');
-
-    // Добавляем новый комментарий в конец списка
-    commentsList.innerHTML += newCommentTemplate;
+    // Перерендериваем комментарии
+    renderComments();
 
     // Очищаем поля ввода
     nameInput.value = '';
     commentTextarea.value = '';
   });
+
+  // Первоначальный рендер комментариев
+  renderComments();
 </script>
-<script src="index1.js"></script>
+</body>
 </html>
