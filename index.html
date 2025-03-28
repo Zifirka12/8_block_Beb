@@ -16,9 +16,8 @@
             placeholder="Введите ваше имя"
     />
     <textarea
-            type="textarea"
             class="add-form-text"
-            placeholder="Введите ваш коментарий"
+            placeholder="Введите ваш комментарий"
             rows="4"
     ></textarea>
     <div class="add-form-row">
@@ -51,45 +50,28 @@
   // Рендеринг комментариев
   function renderComments() {
     const commentsContainer = document.getElementById('comments');
-    commentsContainer.innerHTML = '';
+    commentsContainer.innerHTML = ''; // Очистка контейнера
 
     commentsData.forEach((comment, index) => {
-      const commentItem = document.createElement('li');
-      commentItem.className = 'comment';
+      // Создание строки HTML для каждого комментария
+      const commentItem = `
+      <li class="comment">
+        <div class="comment-header">
+          <div>${comment.author}</div>
+          <div>${comment.date}</div>
+        </div>
+        <div class="comment-body">
+          <div class="comment-text">${comment.text}</div>
+        </div>
+        <div class="comment-footer">
+          <span class="likes-counter">${comment.likesCount}</span>
+          <button class="like-button ${comment.isLiked ? 'active' : ''}" data-index="${index}" onclick="toggleLike(${index})"></button>
+        </div>
+      </li>
+    `;
 
-      // Заголовок комментария
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'comment-header';
-      headerDiv.innerHTML = `
-        <div>${comment.author}</div>
-        <div>${comment.date}</div>
-      `;
-      commentItem.appendChild(headerDiv);
-
-      // Тело комментария
-      const bodyDiv = document.createElement('div');
-      bodyDiv.className = 'comment-body';
-      bodyDiv.innerHTML = `<div class="comment-text">${comment.text}</div>`;
-      commentItem.appendChild(bodyDiv);
-
-      // Лайки
-      const footerDiv = document.createElement('div');
-      footerDiv.className = 'comment-footer';
-
-      const likeButton = document.createElement('button');
-      likeButton.className = 'like-button';
-      likeButton.dataset.index = index;
-      likeButton.onclick = () => toggleLike(index);
-
-      const likesCounter = document.createElement('span');
-      likesCounter.className = 'likes-counter';
-      likesCounter.textContent = comment.likesCount;
-
-      footerDiv.appendChild(likesCounter);
-      footerDiv.appendChild(likeButton);
-      commentItem.appendChild(footerDiv);
-
-      commentsContainer.appendChild(commentItem);
+      // Добавление комментария в контейнер
+      commentsContainer.insertAdjacentHTML('beforeend', commentItem); // beforeend добавляет каждый комментарий в конец списка
     });
   }
 
@@ -98,6 +80,7 @@
     const comment = commentsData[index];
     comment.isLiked = !comment.isLiked; // Меняем состояние лайка
     comment.likesCount += comment.isLiked ? 1 : -1; // Увеличиваем или уменьшаем счетчик лайков
+
     renderComments(); // Перерендериваем комментарии
   }
 
