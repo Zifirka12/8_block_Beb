@@ -16,9 +16,8 @@
             placeholder="Введите ваше имя"
     />
     <textarea
-            type="textarea"
             class="add-form-text"
-            placeholder="Введите ваш коментарий"
+            placeholder="Введите ваш комментарий"
             rows="4"
     ></textarea>
     <div class="add-form-row">
@@ -27,110 +26,6 @@
   </div>
 </div>
 
-<script>
-  "use strict";
-
-  // Массив данных для комментариев
-  const commentsData = [
-    {
-      author: 'Глеб Фокин',
-      date: '12.02.22 12:18',
-      text: 'Это будет первый комментарий на этой странице',
-      likesCount: 3,
-      isLiked: false
-    },
-    {
-      author: 'Варвара Н.',
-      date: '13.02.22 19:22',
-      text: 'Мне нравится как оформлена эта страница! ❤️',
-      likesCount: 75,
-      isLiked: true
-    }
-  ];
-
-  // Рендеринг комментариев
-  function renderComments() {
-    const commentsContainer = document.getElementById('comments');
-    commentsContainer.innerHTML = '';
-
-    commentsData.forEach((comment, index) => {
-      const commentItem = document.createElement('li');
-      commentItem.className = 'comment';
-
-      // Заголовок комментария
-      const headerDiv = document.createElement('div');
-      headerDiv.className = 'comment-header';
-      headerDiv.innerHTML = `
-        <div>${comment.author}</div>
-        <div>${comment.date}</div>
-      `;
-      commentItem.appendChild(headerDiv);
-
-      // Тело комментария
-      const bodyDiv = document.createElement('div');
-      bodyDiv.className = 'comment-body';
-      bodyDiv.innerHTML = `<div class="comment-text">${comment.text}</div>`;
-      commentItem.appendChild(bodyDiv);
-
-      // Лайки
-      const footerDiv = document.createElement('div');
-      footerDiv.className = 'comment-footer';
-
-      const likeButton = document.createElement('button');
-      likeButton.className = 'like-button';
-      likeButton.dataset.index = index;
-      likeButton.onclick = () => toggleLike(index);
-
-      const likesCounter = document.createElement('span');
-      likesCounter.className = 'likes-counter';
-      likesCounter.textContent = comment.likesCount;
-
-      footerDiv.appendChild(likesCounter);
-      footerDiv.appendChild(likeButton);
-      commentItem.appendChild(footerDiv);
-
-      commentsContainer.appendChild(commentItem);
-    });
-  }
-
-  // Обработчик клика на кнопку лайка
-  function toggleLike(index) {
-    const comment = commentsData[index];
-    comment.isLiked = !comment.isLiked; // Меняем состояние лайка
-    comment.likesCount += comment.isLiked ? 1 : -1; // Увеличиваем или уменьшаем счетчик лайков
-    renderComments(); // Перерендериваем комментарии
-  }
-
-  // Обработчик отправки формы для добавления нового комментария
-  document.querySelector('.add-form-button').addEventListener('click', function() {
-    const nameInput = document.querySelector('.add-form-name');
-    const commentTextarea = document.querySelector('.add-form-text');
-
-    if (!nameInput.value || !commentTextarea.value) return alert('Заполните оба поля!');
-
-    // Получаем текущее время
-    let currentDate = new Date();
-    let dateString = `${currentDate.getDate()}.${currentDate.getMonth() + 1}.${currentDate.getFullYear()} ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-    // Добавляем новый комментарий в массив данных
-    commentsData.push({
-      author: nameInput.value,
-      date: dateString,
-      text: commentTextarea.value,
-      likesCount: 0,
-      isLiked: false
-    });
-
-    // Перерендериваем комментарии
-    renderComments();
-
-    // Очищаем поля ввода
-    nameInput.value = '';
-    commentTextarea.value = '';
-  });
-
-  // Первоначальный рендер комментариев
-  renderComments();
-</script>
+<script src="index.js"></script>
 </body>
 </html>
